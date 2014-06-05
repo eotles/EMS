@@ -4,7 +4,10 @@ EMS
 EMS Simulation Project
 
 
-Research Project @ UW - Madison
+Research Project
+University of Wisconsin - Madison
+College of Engineering
+Department of Industrial & Systems Engineering
 McLay Research Group
 Author: Erkin Otles
 Email: eotles@gmail.com
