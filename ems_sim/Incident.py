@@ -2,13 +2,13 @@
 # Author Email: eotles@gmail.com
 # Research Group: McLay Lab
 # Date Started: Spring '14
-# Description: Set of classes that help keep track of incident related information
+# Description: Set of classes that help keep track of incident related info
 
 import random
 import Location
 
 #TODO: Clean up self.times - come up with a better way
-##############################################################
+###############################################################################
 # Times
 # Class that keeps track of important response times  
 class Times(object):
@@ -36,9 +36,11 @@ class Times(object):
                 
     
     def toString(self):
-        return("%s\t%s\t%s\t%s\t%s" %(tToS(self.callTime), tToS(self.ambDisTime), tToS(self.ambArrTime), tToS(self.ambDepTime), tToS(self.ambHosTime)))
+        return("%s\t%s\t%s\t%s\t%s" %(tToS(self.callTime), tToS(self.ambDisTime), 
+                                      tToS(self.ambArrTime), tToS(self.ambDepTime), 
+                                      tToS(self.ambHosTime)))
         
-##############################################################
+###############################################################################
 # IncidentStatus
 # Class to keep track of incident status information
 # Params:
@@ -51,7 +53,7 @@ class IncidentStatus(object):
             self.kind = kind
             self.hospital = hospital
 
-##############################################################
+###############################################################################
 # IncidentStatusPair
 # Class to keep track of hidden (true) status vs observed status  
 class IncidentStatusPair(object):
@@ -65,7 +67,7 @@ class IncidentStatusPair(object):
 #TODO: keep track of incident status pairs
 #TODO: make this ABC with two children (display & no display) for performance
 #TODO: Use the Times object better
-##############################################################
+###############################################################################
 # Incident
 # Class to keep track of information pertaining to a specific
 #    incident
@@ -73,8 +75,7 @@ class IncidentStatusPair(object):
 #    env - simulation env
 #    name - name of caller
 #    hospital - hospital caller would need to go to
-#    displayStatus - if incident should display status info during 
-#             simulation runs 
+#    displayStatus - if incident should display info during simulation runs 
 class Incident(object):
     def __init__(self, env, name, hospital, displayStatus):
         self.location = Location.Location("",random.randint(1,9),random.randint(1,9))
@@ -120,13 +121,15 @@ class Incident(object):
         self.responder =  x
     #put weird self.times into usable Times objects
     def getTimesList(self):
-        self.times = Times(self.calltime, self.ambDisTime, self.ambArrTime, self.ambDepTime, self.ambHosTime)
+        self.times = Times(self.calltime, self.ambDisTime, self.ambArrTime, 
+                           self.ambDepTime, self.ambHosTime)
         return(self.times)
     #return string of incident information
     def toString(self):
         self.getTimesList()
         return('%s\t%i\t%s\t%s\t%s' 
-               %(self.name, self.status.hid.priority, self.location.toString(), self.times.toString(), str(self.responder)))
+               %(self.name, self.status.hid.priority, self.location.toString(), 
+                 self.times.toString(), str(self.responder)))
 
 #Method to convert times (numbers) into pretty strings       
 def tToS(time):

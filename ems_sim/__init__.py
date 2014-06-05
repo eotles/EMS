@@ -22,15 +22,14 @@ END_BUFFER = 5
 STATION = Location.Location("Station", 0, 0)
 HOSPITAL = Location.Location("Hospital", 9, 9)
 
-##############################################################
+###############################################################################
 # makeResponders(env, station, numResp, status)
 # Creates a list of responders to be used in a simulation env 
 # inputs:
 #    env - simulation env
 #    station - location object of the station of the responder
 #    numResp - the number of responders to be created
-#    status  - if responder info should display status info
-#                during simulation runs
+#    status  - if responder info should display status during simulation runs
 # returns: list of responders
 def makeResponders(env, station, numResp, status):
     responderList = list()
@@ -40,7 +39,7 @@ def makeResponders(env, station, numResp, status):
     return responderList
 
 
-##############################################################
+###############################################################################
 # run(replications)
 # Runs replications of simulation
 # inputs:
@@ -56,7 +55,7 @@ def run(replications):
         SEED = random.random()
     outAnal.run(True)
 
-##############################################################
+###############################################################################
 # _runRep(status)
 # Runs a single replication of the simulation
 # inputs:

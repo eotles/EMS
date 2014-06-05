@@ -8,7 +8,7 @@ import random
 import Incident
 
 #TODO: use WORLD Information
-##############################################################
+###############################################################################
 # IncidentGenerator
 # Class that generates incidents and starts response process
 # inputs:
@@ -42,7 +42,8 @@ class IncidentGenerator(object):
             if(intArr < self.simDuration - self.endBuffer - self.env.now):
                 intArr = random.expovariate(1.0/self.tba)
                 yield self.env.timeout(intArr)      
-                inc = Incident.Incident(self.env, 'Person %d' %len(self.incidentList), self.hospital, status)
+                inc = Incident.Incident(self.env, 'Person %d' %len(self.incidentList), 
+                                        self.hospital, status)
                 self.incidentList.append(inc)
                 self.env.process(self.Dispatcher.incidentRespose(inc))
             else:

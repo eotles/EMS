@@ -6,12 +6,11 @@
 
 import numpy
 
-##############################################################
+###############################################################################
 # Data
 # Class to encapsulate sets of data 
 # Params:
-#    dataFields - list of names of each of the various types 
-#                   of data
+#    dataFields - list of names of each of the various types of data
 #    data - list of lists to hold data (row form)
 #    trans - list of list to hold transposed data (col form)
 class Data(object):
@@ -26,7 +25,7 @@ class Data(object):
                 self.trans[i].append(v)
         
 
-##############################################################
+###############################################################################
 # Stats
 # Class to take list of data and package it up in an object
 # with summary statistics
@@ -46,13 +45,12 @@ class stats(object):
         self.arr.append(self.med)
         self.arr.append(self.max)    
 
-##############################################################
+###############################################################################
 # Analyzer
 # Class to take streams of data, collate, and statistically 
 # analyze it
 # Params:
-#    dataFields - list of names of each of the various types 
-#                   of data
+#    dataFields - list of names of each of the various types of data
 #    data - list of lists to hold data (row form)
 # Methods:
 #    addData - adds a row of data to the data object
@@ -78,7 +76,7 @@ class Analyzer(object):
             print(f +"\t"),
         print("")
         for row,_ in enumerate(self.stats[0].arr):
-            for j,s in enumerate(self.stats):
+            for j,__ in enumerate(self.stats):
                 print(str(self.stats[j].arr[row]) + "\t"),
             print("")
            

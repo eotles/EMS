@@ -7,7 +7,7 @@
 import math
 
 #TODO: this is going to be a constituent of the WORLD class
-##############################################################
+###############################################################################
 # Location
 # Class representing position on a 2D rectangular world
 # inputs:

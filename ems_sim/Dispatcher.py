@@ -9,14 +9,13 @@ import sys
 import simpy
 from Responder import *
 
-##############################################################
+###############################################################################
 # Dispatcher
 # Abstract Base Class to provide a template of dispatcher functionality
 # Params:
 #    env - simulation env
 #    responderList - list of available responders
-#    status - if dispatcher should display status info during 
-#             simulation runs
+#    status - if dispatcher should display status info during simulation runs
 #    free - a resource store to keep track of free responders    
 class Dispatcher(object):
     __metaclass__ = abc.ABCMeta
@@ -54,7 +53,7 @@ class Dispatcher(object):
     def _assignResponder(self):
         return
 
-##############################################################
+###############################################################################
 # SimpleDispatcher
 # Child of Dispatcher
 # Chooses the first free responder to respond to incidents     
