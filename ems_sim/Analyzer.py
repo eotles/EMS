@@ -24,7 +24,7 @@ class Data(object):
         for i,v in enumerate(data):
                 self.trans[i].append(v)
         
-
+#TODO: Clean up this class
 ###############################################################################
 # Stats
 # Class to take list of data and package it up in an object
