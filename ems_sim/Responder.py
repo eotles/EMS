@@ -64,6 +64,7 @@ class Responder(object):
                 print("%s: *needs hospitalization!*" %(Incident.name))
             Incident.ambHos()
 
+#not sure this is the right way to procede
 class BLS(Responder):
     def __init__(self, env, name, kind, station, currLocation, speed, displayStatus):
         super(BLS, self).__init__(env, name, kind, station, currLocation, speed, displayStatus)
