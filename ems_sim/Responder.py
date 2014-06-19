@@ -4,6 +4,7 @@
 # Date Started: Spring '14
 # Description: Class to represent responder
 
+import abc
 
 #TODO: Ways to represent off-line/on-line
 #TODO: Keep track of responder utilization
@@ -23,6 +24,9 @@
 #    displayStatus - if responder info should display status info during 
 #                    simulation runs
 class Responder(object):
+    __metaclass__ = abc.ABCMeta
+    
+    @abc.abstractmethod
     def __init__(self, env, name, kind, station, currLocation, speed, displayStatus):
         self.env = env
         self.name = name
@@ -35,6 +39,7 @@ class Responder(object):
     
     #make the responder travel to a location
     #makes time elapse and updates responder location
+    @abc.abstractmethod
     def travelTo(self, Location):
         travelTime = self.speed*Location.dist(self.currLocation)
         yield self.env.timeout(travelTime)
@@ -44,6 +49,7 @@ class Responder(object):
     #represents care process
     #set a time available
     #then heal patient or take them to the hospital 
+    @abc.abstractmethod
     def careIncident(self, Incident):
         self.timeAvail = self.env.now + 3*Incident.caretime
         yield self.env.timeout(Incident.caretime)
@@ -57,3 +63,48 @@ class Responder(object):
             if(self.displayStatus):
                 print("%s: *needs hospitalization!*" %(Incident.name))
             Incident.ambHos()
+
+class BLS(Responder):
+    def __init__(self, env, name, kind, station, currLocation, speed, displayStatus):
+        super(BLS, self).__init__(env, name, kind, station, currLocation, speed, displayStatus)
+    
+    #@abc.abstractmethod
+    def careIncident(self, Incident):
+        self.timeAvail = self.env.now + 3*Incident.caretime
+        yield self.env.timeout(Incident.caretime)
+        if(Incident.priority>0):
+            if(self.displayStatus):
+                print("%s: *healed!*" %(Incident.name))
+            Incident.ambDep()
+        else:
+            Incident.ambDep()
+            yield self.env.process(self.travelTo(Incident.hospital))
+            if(self.displayStatus):
+                print("%s: *needs hospitalization!*" %(Incident.name))
+            Incident.ambHos()
+    
+    #@abc.abstractmethod
+    def travelTo(self, Location):
+        travelTime = self.speed*Location.dist(self.currLocation)
+        yield self.env.timeout(travelTime)
+        self.currLocation = Location
+        
+class ALS(Responder):
+    def __init__(self, env, name, kind, station, currLocation, speed, displayStatus):
+        super(ALS, self).__init__(env, name, kind, station, currLocation, speed, displayStatus)
+    
+    #@abc.abstractmethod
+    def careIncident(self, Incident):
+        self.timeAvail = self.env.now + 3*Incident.caretime
+        Incident.ambDep()
+        yield self.env.process(self.travelTo(Incident.hospital))
+        if(self.displayStatus):
+            print("%s: *needs hospitalization!*" %(Incident.name))
+        Incident.ambHos()
+    
+    #@abc.abstractmethod
+    def travelTo(self, Location):
+        travelTime = self.speed*Location.dist(self.currLocation)
+        yield self.env.timeout(travelTime)
+        self.currLocation = Location
+
