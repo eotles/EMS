@@ -36,6 +36,7 @@ class Responder(object):
         self.speed = speed
         self.timeAvail = env.now
         self.displayStatus = displayStatus
+        self.currIncident = None
     
     #make the responder travel to a location
     #makes time elapse and updates responder location
@@ -50,11 +51,19 @@ class Responder(object):
     
     #assign to incident
     def assignToIncident(self, Incident):
+        self.currIncident = Incident
         neededTime = 0
         neededTime += self._getTravelTime(self.currLocation, Incident.location)
         neededTime += Incident.caretime
         neededTime += self._getTravelTime(Incident.location, Incident.hospital)
         self.timeAvail = self.env.now + neededTime
+        
+    #release from incident
+    def releaseFromIncident(self, Incident):
+        if(self.currIncident == Incident):
+            self.currIncident = None
+        else:
+            raise ReleaseFromIncidentException(Incident)
         
     
     #care at incident
@@ -91,6 +100,11 @@ class Responder(object):
             if(self.displayStatus):
                 print("%s: *needs hospitalization!*" %(Incident.name))
             self.toHospital(Incident)
+        self.releaseFromIncident(Incident)
+
+class ReleaseFromIncidentException(Exception):
+    def __init__(self, Incident):
+        self.incident = Incident
 
 #not sure this is the right way to proceed
 class BLS(Responder):
