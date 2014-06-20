@@ -34,7 +34,7 @@ HOSPITAL = Location.Location("Hospital", 9, 9)
 def makeResponders(env, station, numResp, status):
     responderList = list()
     for i in xrange(numResp):
-        tempResp = Responder.ALS(env, "amb_"+str(i), "amb", station, station, 0.25, status)
+        tempResp = Responder.Responder(env, "amb_"+str(i), "amb", station, station, 0.25, status)
         responderList.append(tempResp)
     return responderList
 
