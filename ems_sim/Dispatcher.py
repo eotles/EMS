@@ -34,7 +34,7 @@ class Dispatcher(object):
     @abc.abstractmethod
     def _sendToIncident(self, Responder, Incident):
         yield self.env.process(Responder.travelTo(Incident.location))
-        Incident.ambArr()
+        Incident.ambArr(Responder)
         yield self.env.process(Responder.careIncident(Incident))
         self.free.put(Responder)
     
@@ -63,14 +63,14 @@ class SimpleDispatcher(Dispatcher):
     
     def _sendToIncident(self, Responder, Incident):
         yield self.env.process(Responder.travelTo(Incident.location))
-        Incident.ambArr()
+        Incident.ambArr(Responder)
         yield self.env.process(Responder.careIncident(Incident))
         self.free.put(Responder)
     
     #first free    
     def incidentRespose(self, inc):
             responder = yield self.free.get()
-            inc.ambDis()
+            inc.ambDis(responder)
             inc.responder = responder.name
             yield self.env.process(self._sendToIncident(responder, inc))
         
@@ -85,4 +85,73 @@ class SimpleDispatcher(Dispatcher):
                 firstAvailTime = Responder.timeAvail
                 firstResponder = Responder
         return(firstResponder)
+
+###############################################################################
+# Priority Dispatcher
+# Child of Dispatcher
+# Chooses the first lowest possible free responder to respond to incidents     
+class PriorityDispatcher(Dispatcher):
+    
+    def __init__(self, env, responderList, status):
+        super(PriorityDispatcher, self).__init__(env, responderList, status)
+        self.detail = False
+    
+    def _sendToIncident(self, Responder, Incident):
+        if(self.detail):
+            print("sending %s to incident %s @%s" %(Responder.name, Incident.name, self.env.now))
+        yield self.env.process(Responder.travelTo(Incident.location))
+        Incident.ambArr(Responder)
+        if(Incident.status.hid.priority < Responder.kind):
+            chooseSecondResponder = self.getCurrPriorFree(Incident.status.hid.priority)
+            chooseSecondResponder.assignToIncident(Incident)
+            if(self.detail):
+                print("\t%s" %chooseSecondResponder.name)
+            secondResponder = yield self.free.get(lambda x: self._isBestResponder(x, chooseSecondResponder))
+            if(self.detail):
+                print("\tgot second responder")
+            secondResponder.assignToIncident(Incident)
+            Incident.ambDis(secondResponder)
+            yield self.env.process(self._sendToIncident(secondResponder, Incident))   
+        else:
+            yield self.env.process(Responder.careIncident(Incident))
+        self.free.put(Responder)
+        if(self.detail):
+            print("freeing %s from incident %s @%s" %(Responder.name, Incident.name, self.env.now))
+        
+    
+    #first free    
+    def incidentRespose(self, inc):
+            bestResponder = self.getCurrPriorFree(inc.status.obs.priority)
+            responder = yield self.free.get(lambda x: self._isBestResponder(x, bestResponder))
+            responder.assignToIncident(inc)        
+            inc.ambDis(responder)
+            inc.responder = responder.name
+            yield self.env.process(self._sendToIncident(responder, inc))
+            
+    def getCurrPriorFree(self, priority):
+        bestTime = float("inf")
+        for responder in self.responderList:
+            #print("%d,%d" %(priority, responder.kind))
+            if(priority == responder.kind):
+                if(responder.timeAvail<bestTime):
+                    bestTime = responder.timeAvail
+                    bestResponder = responder
+        return bestResponder
+        
+        
+    def _isBestResponder(self, resp, best):
+        return(resp.name==best.name)
+    
+    def _assignResponder(self):
+        firstAvailTime = sys.float_info.max
+        firstResponder = None
+        for Responder in self.responderList:
+            if(Responder.timeAvail < firstAvailTime):
+                firstAvailTime = Responder.timeAvail
+                firstResponder = Responder
+        return(firstResponder)
+
+
+
+
 

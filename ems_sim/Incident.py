@@ -82,7 +82,7 @@ class Incident(object):
         self.env = env
         self.name = name
         self.calltime = env.now
-        self.priority = random.randint(0,2)
+        self.priority = random.randint(0,1)
         self.caretime = random.randint(3,20)
         self.ambDisTime = None
         self.ambArrTime = None
@@ -92,30 +92,59 @@ class Incident(object):
         self.hospital = hospital
         self.displayStatus = displayStatus
         self.status = IncidentStatusPair(self.priority, self.priority, self.hospital)
+        self.status.hid.priority = random.randint(0,1)
+        self.disTime = dict()
+        self.arrTime = dict()
+        self.depTime = dict()
+        self.hosTime = dict()
 
         if(self.displayStatus):
             print('%s: calls 911 at %.2f.' %(self.name, self.calltime))
         
     #call when a responder has been dispatched for incident    
-    def ambDis(self):
+    def ambDis(self, responder=None):
         self.ambDisTime = self.env.now
         if(self.displayStatus):
             print('%s: Amb dispatched at %.2f.' %(self.name, self.ambDisTime))
+        if(responder != None):
+            self.dispatch(responder)
+    #logic to protect against multiple calls?
+    def dispatch(self, responder):
+        self.disTime.update({responder: self.env.now})
+        
     #call when a responder has arrived at incident
-    def ambArr(self):
+    def ambArr(self, responder = None):
         self.ambArrTime = self.env.now
         if(self.displayStatus):
             print('%s: Amb arrived at %.2f.' %(self.name, self.ambArrTime))
+        if(responder != None):
+            self.arrival(responder)
+    #logic to protect against multiple calls?
+    def arrival(self, responder):
+        self.arrTime.update({responder: self.env.now})
+            
     #call when responder has departed the incident scene
-    def ambDep(self):
+    def ambDep(self, responder = None):
         self.ambDepTime = self.env.now
         if(self.displayStatus):
             print('%s: Amb leaves at %.2f.' %(self.name, self.ambDepTime))
+        if(responder != None):
+            self.departure(responder)
+    #logic to protect against multiple calls?
+    def departure(self, responder):
+        self.depTime.update({responder: self.env.now})
+            
     #call when the responder arrives at the hospital for given incident
-    def ambHos(self):
+    def ambHos(self, responder = None):
         self.ambHosTime = self.env.now
         if(self.displayStatus):
             print('%s: Amb-Hosp at %.2f' %(self.name, self.ambHosTime))
+        if(responder != None):
+            self.hospitalize(responder)
+    #logic to protect against multiple calls?
+    def hospitalize(self, responder):
+        self.hosTime.update({responder: self.env.now})
+            
     #sets the responder
     def setResponder(self, x):
         self.responder =  x

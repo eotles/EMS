@@ -56,14 +56,18 @@ class Responder(object):
         neededTime += self._getTravelTime(self.currLocation, Incident.location)
         neededTime += Incident.caretime
         neededTime += self._getTravelTime(Incident.location, Incident.hospital)
-        self.timeAvail = self.env.now + neededTime
+        if(self.timeAvail <= self.env.now):
+            self.timeAvail = self.env.now + neededTime
+        else:
+            self.timeAvail = self.timeAvail + neededTime
         
     #release from incident
     def releaseFromIncident(self, Incident):
-        if(self.currIncident == Incident):
-            self.currIncident = None
-        else:
-            raise ReleaseFromIncidentException(Incident)
+        self.currIncident = None
+        #if(self.currIncident == Incident):
+        #    self.currIncident = None
+        #else:
+        #    raise ReleaseFromIncidentException(Incident)
         
     
     #care at incident
@@ -74,13 +78,13 @@ class Responder(object):
     #depart from scene
     #@abc.abstractmethod
     def departIncidentScene(self, Incident):
-        Incident.ambDep()
+        Incident.ambDep(self)
     
     #take to hospital
     #@abc.abstractmethod
     def toHospital(self, Incident):
         yield self.env.process(self.travelTo(Incident.hospital))
-        Incident.ambHos()
+        Incident.ambHos(self.name)
     
    
     #TODO: make timeAvail work better
@@ -99,8 +103,9 @@ class Responder(object):
             self.departIncidentScene(Incident)
             if(self.displayStatus):
                 print("%s: *needs hospitalization!*" %(Incident.name))
-            self.toHospital(Incident)
+            yield self.env.process(self.toHospital(Incident))
         self.releaseFromIncident(Incident)
+        #print("released %s" %self.name)
 
 class ReleaseFromIncidentException(Exception):
     def __init__(self, Incident):

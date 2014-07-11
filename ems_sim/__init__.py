@@ -16,11 +16,13 @@ import IncidentGenerator
 #CONSTANTS
 SEED = 42
 SIM_DURATION = 86400
-NUM_AMB = 5
+SIM_DURATION = 3600
+NUM_AMB = 3
 TBA = 120
-END_BUFFER = 5
+END_BUFFER = 0
 STATION = Location.Location("Station", 0, 0)
 HOSPITAL = Location.Location("Hospital", 9, 9)
+DETAIL = False
 
 ###############################################################################
 # makeResponders(env, station, numResp, status)
@@ -34,7 +36,7 @@ HOSPITAL = Location.Location("Hospital", 9, 9)
 def makeResponders(env, station, numResp, status):
     responderList = list()
     for i in xrange(numResp):
-        tempResp = Responder.Responder(env, "amb_"+str(i), "amb", station, station, 0.25, status)
+        tempResp = Responder.Responder(env, "amb_"+str(i), i%2, station, station, 0.25, status)
         responderList.append(tempResp)
     return responderList
 
@@ -51,7 +53,7 @@ def run(replications):
     for i in xrange(replications):
         random.seed(SEED)
         print('EMS! Run %i of %i' %(i+1, replications))
-        outAnal.addData(_runRep(False))
+        outAnal.addData(_runRep(DETAIL))
         SEED = random.random()
     outAnal.run(True)
 
@@ -66,7 +68,8 @@ def _runRep(status):
     env = simpy.Environment()
     
     #make emergency responder resources
-    ems = Dispatcher.SimpleDispatcher(env, makeResponders(env, STATION, NUM_AMB, status), status)
+    #ems = Dispatcher.SimpleDispatcher(env, makeResponders(env, STATION, NUM_AMB, status), status)
+    ems = Dispatcher.PriorityDispatcher(env, makeResponders(env, STATION, NUM_AMB, status), status)
     calls = IncidentGenerator.IncidentGenerator(env, ems, TBA, SIM_DURATION, END_BUFFER, HOSPITAL, status)
     
     horizBar = "----------------------------------------------------------------------"            
@@ -74,7 +77,8 @@ def _runRep(status):
         print(horizBar)
     
     #run simulation
-    env.run(until=SIM_DURATION)
+    #env.run(until=SIM_DURATION)
+    env.run()
     
     #print incident summary table
     if(status):
