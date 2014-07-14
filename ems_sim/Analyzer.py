@@ -73,7 +73,7 @@ class Analyzer(object):
     #displays stats in a summary table        
     def _printStats(self):
         for f in self.data.dataFields:
-            print(f +"\t"),
+            print(f +"\t")
         print("")
         for row,_ in enumerate(self.stats[0].arr):
             for j,__ in enumerate(self.stats):

@@ -16,7 +16,7 @@ import IncidentGenerator
 #CONSTANTS
 SEED = 42
 SIM_DURATION = 86400
-SIM_DURATION = 3600
+#SIM_DURATION = 3600
 NUM_AMB = 3
 TBA = 120
 END_BUFFER = 0
@@ -69,7 +69,7 @@ def _runRep(status):
     
     #make emergency responder resources
     #ems = Dispatcher.SimpleDispatcher(env, makeResponders(env, STATION, NUM_AMB, status), status)
-    ems = Dispatcher.PriorityDispatcher(env, makeResponders(env, STATION, NUM_AMB, status), status)
+    ems = Dispatcher.SimpleDispatcher(env, makeResponders(env, STATION, NUM_AMB, status), status)
     calls = IncidentGenerator.IncidentGenerator(env, ems, TBA, SIM_DURATION, END_BUFFER, HOSPITAL, status)
     
     horizBar = "----------------------------------------------------------------------"            
