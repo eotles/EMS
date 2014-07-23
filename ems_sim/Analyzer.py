@@ -5,7 +5,9 @@
 # Description: Provides a toolkit to analyze data efficiently
 
 import numpy
+import pandas as pd
 
+#TODO: build  data structure to save rep data using pandas
 ###############################################################################
 # Data
 # Class to encapsulate sets of data 
@@ -16,6 +18,7 @@ import numpy
 class Data(object):
     def __init__(self, dataFields):
         self.dataFields = dataFields
+        self.dataTypes = None
         self.data = list()
         self.trans = [list() for _ in self.dataFields]
     

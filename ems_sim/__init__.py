@@ -23,6 +23,7 @@ END_BUFFER = 0
 STATION = Location.Location("Station", 0, 0)
 HOSPITAL = Location.Location("Hospital", 9, 9)
 DETAIL = False
+DETAIL = True
 
 ###############################################################################
 # makeResponders(env, station, numResp, status)
