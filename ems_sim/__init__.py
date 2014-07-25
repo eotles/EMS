@@ -12,6 +12,8 @@ import Location
 import Responder
 import Dispatcher
 import IncidentGenerator
+from pandas import DataFrame, Series
+import pandas as pd
 
 #CONSTANTS
 SEED = 42
@@ -86,12 +88,19 @@ def _runRep(status):
         print(horizBar)
     
     #analysis
+    columns = ["D1", "D2", "D3", "D4"]
+    
     analysis = Analyzer.Analyzer(["D1", "D2", "D3", "D4"])
+    
+    tempDict = dict()
+    
     for inc in calls.incidentList:
         if(status):
             print(inc.toString())
         incTimes = inc.getTimesList()
         analysis.addData(incTimes.difList)
+        tempDict.update({len(tempDict) : {col:incTimes.difList[i] for i,col in enumerate(columns)}})
+        
     analysis.run(status)
     
     return([i.mea for i in analysis.stats])
