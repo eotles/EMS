@@ -1,3 +1,6 @@
 import ems_sim
 
-ems_sim.run(1000)
+ems_sim.run(10)
+
+
+
